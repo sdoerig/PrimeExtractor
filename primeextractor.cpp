@@ -107,7 +107,13 @@ void PrimeExtractor::extract()
       this->iterateVector(step);
       step = this->findNextStep();
     } while (step > 0 && step <= this->stopSqrt);
-    
+    if (this->stop >=2) {
+      /**
+       * Note: with the procedure described above 2 will never be 
+       * calculated but it's prime.
+       **/
+      std::cout << 2 << std::endl;
+    }
     for(long i = 1; i < this->primeCand.size() ; i++) {
       if (this->primeCand[i] == true) {
 	  std::cout << i * 2 + 1 << std::endl;
