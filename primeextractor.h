@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 <copyright holder> <email>
+ * Copyright 2014 Stefan Dörig sdoerig@bluewin.ch
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,10 @@ class PrimeExtractor
   
 
   private:
-    long findNextStep(long lastStep = 3);
+    long findNextStep();
     void iterateVector(long step = 3); 
     
+    long lastStep;
     long stop;
     long stopSqrt;
     std::vector<bool> primeCand;

@@ -27,41 +27,102 @@ PrimeExtractor::PrimeExtractor()
 
 PrimeExtractor::PrimeExtractor(long stop)
 {
-  this->stop = stop;
-  this->primeCand.resize(stop + 1);
-  this->stopSqrt = (long)floor(sqrt(stop));
-  for(long i = 0; i < this->primeCand.size()  ; i = i + 2) {
-    this->primeCand[i] = false;
-    this->primeCand[i + 1] = true;
+  /**
+   * The internal data structure consists of a vector of booleans.
+   * Given a stop count indicating running until reaching this stop. The binary
+   * vector size is just half of the stop count - since half of the numbers are
+   * even and therefore not prime. So this leads considerung the iterations to
+   * the example tables below. Under the title iterateVector are
+   * - index within the vector
+   * - value of that index
+   * natural stands for the number represended by this index.
+   * 
+   * Init:
+   * iterateVector  natural
+   *  0    false        1
+   *  1    true         3
+   *  2    true         5
+   *  3    true         7
+   *  4    true         9
+   *  5    true        11 
+   *  6    true        13
+   *  7    true        15
+   *  8    true        17
+   *  9    true        19
+   * 10    true        21
+   * 11    true        23
+   * 12    true        25
+   *
+   * First interation:
+   * findNextStep returns 1 * 2 + 1 = 3
+   * iterateVector  natural
+   *  0    false        1
+   *  1    true         3
+   *  2    true         5
+   *  3    true         7
+   *  4    false        9
+   *  5    true        11 
+   *  6    true        13
+   *  7    false       15
+   *  8    true        17
+   *  9    true        19
+   * 10    false       21
+   * 11    true        23
+   * 12    true        25
+   *
+   * Second iteration:
+   * findNextStep returns 2 * 2 +1 = 5
+   * iterateVector  natural
+   *  0    false        1
+   *  1    true         3
+   *  2    true         5
+   *  3    true         7
+   *  4    false        9
+   *  5    true        11 
+   *  6    true        13
+   *  7    false       15
+   *  8    true        17
+   *  9    true        19
+   * 10    false       21
+   * 11    true        23
+   * 12    false       25
+   *
+   **/
+  long stop_limited = stop / 2 + 1;
+  
+  this->stop = stop ;
+  this->primeCand.resize(stop_limited + 1);
+  this->stopSqrt = (long)ceil(sqrt(stop));
+  for(long i = 0; i < this->primeCand.size()  ; i++) {
+    this->primeCand[i] = true;
   }
-  this->primeCand[2] = true;
+  this->primeCand[1] = true;
 }
 
 void PrimeExtractor::extract()
 {
-    //std::cout << 2 << std::endl;
-    long step = this->findNextStep(2);
-
+    long step = this->findNextStep();
+    
     do {
-      //std::cout << step << std::endl;
       this->iterateVector(step);
-      step = this->findNextStep(step);
+      step = this->findNextStep();
     } while (step > 0 && step <= this->stopSqrt);
     
-    for(long i = 2; i < this->primeCand.size() ; i++) {
+    for(long i = 1; i < this->primeCand.size() ; i++) {
       if (this->primeCand[i] == true) {
-	  std::cout << i << std::endl;
+	  std::cout << i * 2 + 1 << std::endl;
       } 
 	
     }
 }
 
 
-long PrimeExtractor::findNextStep(long lastStep)
+long PrimeExtractor::findNextStep()
 {
-  for (long i = lastStep + 1; i < this->primeCand.size(); i++) {
+  for (long i = this->lastStep +1; i < this->primeCand.size(); i++) {
     if (this->primeCand[i] == true) {
-      return i;
+      this->lastStep = i;
+      return i*2+1 ;
     } 
   }
   return 0;
@@ -70,7 +131,7 @@ long PrimeExtractor::findNextStep(long lastStep)
  
 void PrimeExtractor::iterateVector(long step)
 {
-  for(long i = step + step  ; i < this->primeCand.size(); i = i + step) {
+  for(long i = this->lastStep + step; i < this->primeCand.size(); i = i + step) {
     this->primeCand[i] = false;
   }
   
